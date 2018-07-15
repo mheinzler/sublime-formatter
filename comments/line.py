@@ -9,7 +9,7 @@ from ..dependencies.pypeg2 import Parser
 
 
 def is_valid_line_comment(view, region):
-    """Check if comments."""
+    """Check if region contains a line comment."""
 
     # the region must end in a line comment
     if (region.empty() or
