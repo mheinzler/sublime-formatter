@@ -64,7 +64,9 @@ class ListItem(List):
 
         # wrap the text at the remaining width
         width = parser.width - indentation_length
-        wrapper = TextWrapper(width=width, initial_indent=self[0].start)
+        wrapper = TextWrapper(width=width, initial_indent=self[0].start,
+                              break_long_words=False,
+                              break_on_hyphens=False)
 
         # indent all but the first lines with an additional level
         wrapper.subsequent_indent = " " * parser.tab_size
