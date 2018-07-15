@@ -29,7 +29,7 @@ def reload_modules():
     # XXX: do this twice to make sure they are reloaded correctly
     for i in range(2):
         for m in sys.modules.keys():
-            if m.startswith("sublime-formatter.comments"):
+            if m.startswith("sublime-formatter.") and "dependencies" not in m:
                 imp.reload(sys.modules[m])
 
 
@@ -48,8 +48,8 @@ class FormatterCommand(sublime_plugin.TextCommand):
             self.apply_rulers()
         elif command == "restore_rulers":
             self.apply_rulers(restore=True)
-        elif command == "format_comment":
-            self.format_comment()
+        elif command == "format":
+            self.format()
 
     def apply_rulers(self, restore=False):
         """
@@ -69,8 +69,8 @@ class FormatterCommand(sublime_plugin.TextCommand):
             preferences.set("rulers", original_rulers)
             original_rulers = None
 
-    def format_comment(self):
-        """Format a comment at the current selection."""
+    def format(self):
+        """Format the text at the current selection."""
 
         # run a formatter based on the current selection
         for s in self.view.sel():
