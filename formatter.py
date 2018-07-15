@@ -4,6 +4,7 @@ import sublime
 import sublime_plugin
 
 from . import comments
+from . import texts
 
 original_rulers = None
 
@@ -83,3 +84,6 @@ class FormatterCommand(sublime_plugin.TextCommand):
                                           "source.c++ comment.block.c"):
                 comments.FormatDoxygenCppBlockComment(self.view, self.edit,
                                                       position)
+            elif self.view.match_selector(position,
+                                          "text.plain, text.html.markdown"):
+                texts.FormatParagraph(self.view, self.edit, position)
