@@ -27,6 +27,7 @@ class Expression(Symbol):
 
 commands = ["@brief", "@tparam", "@param", "@return",
             "@code", "@endcode", "@note", "@warning", "@throws", "@see",
+            "@related", "@relatedalso",
             r"\|", r"\[.+\]:"]
 CommandContents = re.compile(r"(?!" + r"|".join(commands) + r").+")
 
@@ -283,6 +284,12 @@ class Throws(BreakingParagraph):
 See = HeaderLine("@see", blank)
 
 
+Related = HeaderLine("@related", blank)
+
+
+RelatedAlso = HeaderLine("@relatedalso", blank)
+
+
 class TableRow(Concat):
     grammar = attr("prefix", Prefix), "|", attr("contents", Contents), "\n"
 
@@ -305,6 +312,8 @@ Paragraph = [
     Warning,
     Throws,
     See,
+    RelatedAlso,
+    Related,
     Table,
     ReferenceLink,
     Details
