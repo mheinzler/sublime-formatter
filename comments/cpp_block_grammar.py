@@ -29,7 +29,7 @@ commands = ["@brief", "@tparam", "@param", "@return",
             "@code", "@endcode", "@note", "@warning", "@throws", "@see",
             "@related", "@relatedalso",
             r"\|", r"\[.+\]:"]
-CommandContents = re.compile(r"(?!" + r"|".join(commands) + r").+")
+CommandContents = re.compile(r"(?!\t*(?:" + r"|".join(commands) + r")).+")
 
 
 class Start(Concat):
@@ -37,7 +37,7 @@ class Start(Concat):
 
 
 class Prefix(Concat):
-    grammar = Indentation, re.compile(r" \*(\t|(?=\n)|$)")
+    grammar = Indentation, re.compile(r" \*(\t+|(?=\n)|$)")
 
 
 class End(Concat):
