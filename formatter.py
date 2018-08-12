@@ -45,12 +45,21 @@ class FormatterCommand(sublime_plugin.TextCommand):
         if debug():
             reload_modules()
 
-        if command == "apply_rulers":
-            self.apply_rulers()
-        elif command == "restore_rulers":
-            self.apply_rulers(restore=True)
-        elif command == "format":
-            self.format()
+        try:
+            if command == "apply_rulers":
+                self.apply_rulers()
+            elif command == "restore_rulers":
+                self.apply_rulers(restore=True)
+            elif command == "format":
+                self.format()
+        except Exception as e:
+            # if an error occurs, open the console for the window where the
+            # command was run in
+            self.view.window().run_command("show_panel", {"panel": "console"})
+
+            # raise the exception again for Sublime Text to print it in the
+            # console
+            raise e
 
     def apply_rulers(self, restore=False):
         """
