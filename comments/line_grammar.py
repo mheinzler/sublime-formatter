@@ -13,7 +13,7 @@ Contents = re.compile(r".+")
 class Prefix(Concat):
     grammar = (Indentation,
                attr("punctuation", Punctuation),
-               re.compile(r"( |(?=\n)|$)"))
+               re.compile(r"( |(?=\w)|(?=\n)|$)"))
 
 
 class Line(Concat):
