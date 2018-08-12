@@ -6,7 +6,7 @@ from ..dependencies.pypeg2 import *
 
 
 Indentation = re.compile(r"[ \t]*")
-Punctuation = re.compile(r"///?|#")
+Punctuation = re.compile(r"//+|#+")
 Contents = re.compile(r".+")
 
 
