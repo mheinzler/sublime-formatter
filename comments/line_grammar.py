@@ -39,7 +39,7 @@ class ContiguousParagraph(List):
 
         # wrap the text at the remaining width
         width = parser.width - prefix_length
-        lines = textwrap.wrap(contents, width)
+        lines = textwrap.wrap(contents, width, break_on_hyphens=False)
 
         # prepend the prefix to all lines
         for i in range(0, len(lines)):
