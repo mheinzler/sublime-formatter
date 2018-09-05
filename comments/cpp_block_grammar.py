@@ -40,6 +40,10 @@ class Prefix(Concat):
     grammar = Indentation, re.compile(r" \*(\t+|(?=\n)|$)")
 
 
+class PrefixFixed(Concat):
+    grammar = Indentation, re.compile(r" \*(\t|(?=\n)|$)")
+
+
 class End(Concat):
     grammar = Indentation, re.compile(r"\*\*/| \*/"), "\n"
 
@@ -68,6 +72,10 @@ class SeparatorLine(Concat):
 
 class CommandLine(Concat):
     grammar = attr("prefix", Prefix), attr("contents", CommandContents), "\n"
+
+
+class IndentedCommandLine(Concat):
+    grammar = attr("prefix", PrefixFixed), attr("contents", CommandContents), "\n"
 
 
 class Separator(List):
@@ -228,7 +236,7 @@ class EndCodeLine(Concat):
 class Code(BreakingParagraph):
     command = "@code"
     grammar = (HeaderLine(command, optional(re.compile(r"\{.+?\}"))),
-               maybe_some([CommandLine, Separator]),
+               maybe_some([IndentedCommandLine, Separator]),
                EndCodeLine)
 
     def compose(self, parser, attr_of=None):
