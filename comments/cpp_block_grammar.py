@@ -28,7 +28,7 @@ class Expression(Symbol):
 commands = ["@brief", "@tparam", "@param", "@return",
             "@code", "@endcode", "@note", "@warning", "@throws", "@see",
             "@related", "@relatedalso",
-            r"\|", r"\[.+\]:"]
+            r"\|", r"\[.+\]:", r"[\+\-\*]"]
 CommandContents = re.compile(r"(?!\t*(?:" + r"|".join(commands) + r")).+")
 
 
