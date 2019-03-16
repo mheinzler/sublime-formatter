@@ -16,7 +16,7 @@ def to_class_name(s):
 
 
 Indentation = re.compile(r"\t*")
-Contents = re.compile(r".+")
+Contents = re.compile(r"[^\+\-\*\n].*")
 
 
 # This must be a Symbol to be able to compose expressions like "<unnamed>". Not
@@ -306,6 +306,63 @@ class Table(List):
     grammar = some(TableRow)
 
 
+ListItemStart = re.compile(r"[\+\-\*] ")
+
+
+class ListItemStartLine(Concat):
+    grammar = (attr("prefix", PrefixFixed),
+               attr("indentation", Indentation),
+               attr("start", ListItemStart),
+               attr("contents", Contents), "\n")
+
+
+class ListItemLine(Concat):
+    grammar = (attr("prefix", Prefix),
+               attr("contents", Contents), "\n")
+
+
+class ListItem(List):
+    grammar = ListItemStartLine, maybe_some(ListItemLine)
+
+    def compose(self, parser, attr_of=None):
+        # find the original line prefix and indentation
+        prefix = parser.compose(self[0].prefix)
+        indentation = self[0].indentation
+
+        # add the contents of all lines together
+        contents = " ".join([l.contents.strip() for l in self if l.contents])
+
+        # wrap the text at the remaining width
+        indentation_length = len((prefix + indentation)
+                                 .expandtabs(parser.tab_size))
+        width = parser.width - indentation_length
+
+        wrapper = textwrap.TextWrapper(width=width,
+                                       initial_indent=self[0].start,
+                                       break_long_words=False,
+                                       break_on_hyphens=False)
+
+        # indent all but the first lines with an additional level
+        wrapper.subsequent_indent = " " * parser.tab_size
+
+        lines = wrapper.wrap(contents)
+
+        # prepend the prefix and indentation to all lines
+        for i in range(0, len(lines)):
+            # turn the subsequent indentation into a tab character
+            if i > 0:
+                lines[i] = re.sub(r"^" + wrapper.subsequent_indent, "\t",
+                                  lines[i])
+
+            lines[i] = prefix + indentation + lines[i] + "\n"
+
+        return "".join(lines)
+
+
+class ListItems(List):
+    grammar = some(ListItem)
+
+
 class ReferenceLink(Concat):
     grammar = Prefix, re.compile(r"\[.+\]: .*"), "\n"
 
@@ -323,6 +380,7 @@ Paragraph = [
     RelatedAlso,
     Related,
     Table,
+    ListItems,
     ReferenceLink,
     Details
 ]
