@@ -16,7 +16,7 @@ def to_class_name(s):
 
 
 Indentation = re.compile(r"\t*")
-Contents = re.compile(r"[^\+\-\*\n].*")
+Contents = re.compile(r".*")
 
 
 # This must be a Symbol to be able to compose expressions like "<unnamed>". Not
@@ -72,10 +72,6 @@ class SeparatorLine(Concat):
 
 class CommandLine(Concat):
     grammar = attr("prefix", Prefix), attr("contents", CommandContents), "\n"
-
-
-class IndentedCommandLine(Concat):
-    grammar = attr("prefix", PrefixFixed), attr("contents", CommandContents), "\n"
 
 
 class Separator(List):
@@ -236,7 +232,7 @@ class EndCodeLine(Concat):
 class Code(BreakingParagraph):
     command = "@code"
     grammar = (HeaderLine(command, optional(re.compile(r"\{.+?\}"))),
-               maybe_some([IndentedCommandLine, Separator]),
+               maybe_some([CodeLine, Separator]),
                EndCodeLine)
 
     def compose(self, parser, attr_of=None):
@@ -318,7 +314,7 @@ class ListItemStartLine(Concat):
 
 class ListItemLine(Concat):
     grammar = (attr("prefix", Prefix),
-               attr("contents", Contents), "\n")
+               attr("contents", re.compile(r"[^\+\-\*\n].*")), "\n")
 
 
 class ListItem(List):
