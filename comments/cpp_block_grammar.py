@@ -225,6 +225,12 @@ class ParametersReturns(Concat):
     grammar = Parameters, omit(optional(Separator)), Returns
 
 
+class CodeLine(Concat):
+    grammar = (attr("prefix", PrefixFixed),
+               attr("contents", re.compile(r"(?!\t*@endcode).+")),
+               "\n")
+
+
 class EndCodeLine(Concat):
     grammar = attr("prefix", Prefix), "@endcode", "\n"
 
