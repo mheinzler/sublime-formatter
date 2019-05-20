@@ -374,8 +374,49 @@ class ListItem(List):
         return "".join(lines)
 
 
+class BreakingListItemStartLine(Concat):
+    grammar = (attr("prefix", PrefixFixed),
+               attr("indentation", Indentation),
+               attr("start", ListItemStart),
+               attr("contents", re.compile(r".*<br>")), "\n")
+
+
+class BreakingListItem(BreakingParagraph):
+    grammar = BreakingListItemStartLine, maybe_some(ListItemLine)
+
+    def compose(self, parser, attr_of=None):
+        # find the original line prefix and indentation
+        prefix = parser.compose(self[0].prefix)
+        indentation = self[0].indentation + "\t"
+
+        # add the contents of all lines together
+        contents = " ".join([l.contents.strip() for l in self[1:]
+                             if l.contents])
+
+        # wrap the text at the remaining width
+        indentation_length = len((prefix + indentation)
+                                 .expandtabs(parser.tab_size))
+        width = parser.width - indentation_length
+
+        wrapper = textwrap.TextWrapper(width=width,
+                                       break_long_words=False,
+                                       break_on_hyphens=False)
+
+        lines = wrapper.wrap(contents)
+
+        # construct the start line
+        start = parser.compose(self[0])
+        lines.insert(0, start)
+
+        # prepend the prefix and indentation to all other lines
+        for i in range(1, len(lines)):
+            lines[i] = prefix + indentation + lines[i] + "\n"
+
+        return "".join(lines)
+
+
 class ListItems(List):
-    grammar = some(ListItem)
+    grammar = some([BreakingListItem, ListItem])
 
 
 class ReferenceLink(Concat):
