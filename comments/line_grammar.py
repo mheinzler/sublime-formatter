@@ -1,9 +1,17 @@
 """Grammar for line comments."""
 
+import re
 import textwrap
 
-from ..dependencies.pypeg2 import *
-
+from ..dependencies.pypeg2 import (
+    Concat,
+    List,
+    attr,
+    contiguous,
+    maybe_some,
+    omit,
+    some
+)
 
 Indentation = re.compile(r"[ \t]*")
 Punctuation = re.compile(r"//+|#+")

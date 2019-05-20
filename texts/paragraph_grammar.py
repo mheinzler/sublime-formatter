@@ -3,7 +3,13 @@
 from textwrap import TextWrapper, wrap
 import re
 
-from ..dependencies.pypeg2 import *
+from ..dependencies.pypeg2 import (
+    Concat,
+    List,
+    attr,
+    maybe_some,
+    some
+)
 
 
 Indentation = re.compile(r"[ \t]*")

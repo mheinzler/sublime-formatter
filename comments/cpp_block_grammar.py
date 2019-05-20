@@ -1,8 +1,21 @@
 """Grammar for Doxygen C++ block comments."""
 
+import re
 import textwrap
 
-from ..dependencies.pypeg2 import *
+from ..dependencies.pypeg2 import (
+    Concat,
+    List,
+    Symbol,
+    attr,
+    blank,
+    contiguous,
+    ignore,
+    maybe_some,
+    omit,
+    optional,
+    some
+)
 
 
 def to_class_name(s):

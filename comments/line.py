@@ -12,8 +12,8 @@ def is_valid_line_comment(view, region):
     """Check if region contains a line comment."""
 
     # the region must end in a line comment
-    if (region.empty() or
-            not view.match_selector(region.end() - 1, "comment.line")):
+    if (region.empty()
+            or not view.match_selector(region.end() - 1, "comment.line")):
         return False
 
     # now check if everything before the comment consists only of spaces and
