@@ -1,6 +1,6 @@
 """Grammar for paragraphs."""
 
-from textwrap import TextWrapper, wrap
+from textwrap import TextWrapper
 import re
 
 from ..dependencies.pypeg2 import (
@@ -34,7 +34,11 @@ class Text(List):
 
         # wrap the text at the remaining width
         width = parser.width - indentation_length
-        lines = wrap(contents, width)
+        wrapper = TextWrapper(width=width,
+                              break_long_words=False,
+                              break_on_hyphens=False)
+
+        lines = wrapper.wrap(contents)
 
         # prepend the indentation to all lines
         for i in range(0, len(lines)):
